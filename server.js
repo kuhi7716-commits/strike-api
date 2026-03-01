@@ -1,17 +1,31 @@
-const express = require('express');
+const express = require("express");
 const app = express();
+
 app.use(express.json());
 
-let lastBallEvent = null;
-
-app.post('/ball', (req, res) => {
-    lastBallEvent = Date.now();
-    res.sendStatus(200);
+// ★ CORS完全許可
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
 });
 
-app.get('/ball', (req, res) => {
-    res.json({ time: lastBallEvent });
+let lastBallTime = null;
+
+app.post("/ball", (req, res) => {
+  lastBallTime = Date.now();
+  res.json({ status: "ok" });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("API running"));
+app.get("/ball", (req, res) => {
+  res.json({ time: lastBallTime });
+});
+
+app.get("/", (req, res) => {
+  res.send("Strike API Running");
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server started");
+});
